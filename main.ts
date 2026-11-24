@@ -5,24 +5,30 @@
 // baked into this file, so the output is identical on every run.
 
 import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-// The entry: "Ghosting".
+// The entry: "Situationship".
 //
-// Why this word, against the judge's brief (most important first):
-// 1. On-subject: it describes Wi-Fi as lived — the signal vanishes
-//    without warning or explanation, exactly like being ghosted.
-// 2. Funny at once: the dating metaphor lands instantly, no setup.
-// 3. True: every home Wi-Fi drops out mid-call, mid-show, mid-game.
-// 4. Surprising angle: not "slow" / "buffering" / "weak", the words
-//    everyone reaches for — a familiar annoyance seen sideways.
-// 5. One word, instantly readable, and a fine network name.
-const WORD = "Ghosting";
+// Three candidates, judged against the brief's criteria in order
+// (on-subject fit first, then the laugh, then the truth, then freshness):
+// 1. "Flaky" — on-subject and true (the signal drops in and out), but
+//    the laugh is mild and the angle is stale: the first word everyone
+//    reaches for about unreliable Wi-Fi.
+// 2. "Ghosting" — on-subject, funny, true, but already entered by
+//    other hunters in this bounty, so its freshness is spent.
+// 3. "Situationship" — on-subject (Wi-Fi that connects, vanishes,
+//    comes back and never commits, exactly like one), the laugh lands
+//    at once, it is true of every home network, and the angle is fresh:
+//    a relationship word nobody else has used for a router. Winner.
+const WORD = "Situationship";
 
-const outputPath = process.env.OUTPUT_PATH ?? "/output/entry.txt";
+if (!/^[A-Za-z]{1,30}$/.test(WORD)) {
+  throw new Error("word must be exactly one word of 1-30 letters");
+}
 
-// /output may not exist yet in a fresh sandbox; create it if needed.
-mkdirSync(outputPath.slice(0, outputPath.lastIndexOf("/")), {
-  recursive: true,
-});
+// No trailing newline: the file holds exactly the word, nothing else,
+// so the entry is one word however the reader counts it.
 
-writeFileSync(outputPath, WORD, "utf8");
+const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, "entry.txt"), WORD, "utf8");
